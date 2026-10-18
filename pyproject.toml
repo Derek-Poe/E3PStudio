@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "e3p-toolpath-studio"
+version = "0.1.0"
+description = "Offline linear G-code splitting and geometric toolpath inspection"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "Derek Poe"}]
+dependencies = []
+
+[project.scripts]
+e3p-gcode-split = "e3p_studio.gcode_split:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

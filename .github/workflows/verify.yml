@@ -1,0 +1,25 @@
+name: Offline geometry checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11', '3.13', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install build
+      - run: python -m unittest discover -s tests -v
+      - run: python tools/build_demo.py --check
+      - run: python -m build
+      - name: Smoke-test the installed wheel away from source
+        run: |
+          python -m pip install dist/*.whl
+          cd "$RUNNER_TEMP"
+          e3p-gcode-split "$GITHUB_WORKSPACE/demo/synthetic.gcode" --output split.gcode --gap-mm 4
+          python -c "from pathlib import Path; from e3p_studio.inspection import replay, summarize; assert summarize(replay(Path('split.gcode').read_text()), axis='x', cut=40, gap=4)['gap_violations'] == 0"

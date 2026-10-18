@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'">
+<title>E3P Studio · Toolpath geometry</title>
+<style>
+:root{color-scheme:dark;font:16px/1.5 system-ui,sans-serif;background:#080f1b;color:#e2e8f0}*{box-sizing:border-box}body{max-width:1240px;margin:0 auto;padding:36px 24px}h1{font-size:clamp(30px,4vw,48px);line-height:1.1;letter-spacing:-.035em;margin:12px 0 18px}h2{font-size:15px;text-transform:uppercase;letter-spacing:.09em;font-weight:600;margin:0;padding:18px 20px;color:#cbd5e1}.eyebrow{font-size:12px;letter-spacing:.17em;color:#93c5fd}.intro{max-width:850px;color:#aebed1;margin-bottom:24px}.controls{display:flex;flex-wrap:wrap;gap:20px;align-items:center;padding:18px 20px;border:1px solid #243247;border-radius:12px;background:#101c2c}label{font-size:13px;color:#aebed1;display:flex;gap:9px;align-items:center}select{font:inherit;background:#18283d;color:#e2e8f0;padding:7px;border:1px solid #3b4b61;border-radius:5px}input{accent-color:#60a5fa}.panels{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}.panel{border:1px solid #243247;border-radius:12px;overflow:hidden;background:#0c1726}canvas{display:block;width:100%;aspect-ratio:600/370}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.stat{border-top:1px solid #334155;padding-top:12px}.number{display:block;font-size:26px;color:#f8fafc;font-variant-numeric:tabular-nums}.caption{font-size:12px;color:#94a3b8}.legend{display:flex;gap:22px;flex-wrap:wrap;margin-top:20px;font-size:13px}.blue{color:#60a5fa}.gold{color:#fbbf24}.purple{color:#c084fc}.muted{color:#94a3b8}.explanation{margin:22px 0 10px;padding:18px 20px;border-left:3px solid #60a5fa;background:#101c2c;color:#bccbdd}a{color:#93c5fd}footer{border-top:1px solid #243247;margin-top:28px;padding-top:16px;font-size:13px;color:#94a3b8}#layerNote{font-size:13px;color:#94a3b8}@media(max-width:720px){body{padding:24px 14px}.panels{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.controls{gap:12px}h2{padding:12px 16px}}
+</style>
+<header><div class="eyebrow">E3P STUDIO / OFFLINE GEOMETRY</div><h1>A cut in the toolpath.</h1><p class="intro">One synthetic sliced shape, separated into two halves after slicing. Crossing extrusion moves are split at X = 40 mm; each half shifts 2 mm. Explore the original paths, the gap, and optional joiner geometry.</p></header>
+<section class="controls" aria-label="Preview controls">
+<label>Transformation <select id="variant"><option value="split">Separation only</option><option value="joiners">Outside joiners</option><option value="pads" selected>Hardware pads</option></select></label>
+<label>Layer <select id="layer"><option value="-1">−1 · raft</option><option value="0" selected>0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></label>
+<label><input type="checkbox" id="travel"> Show travel</label>
+<label>Reveal paths <input id="reveal" type="range" min="0" max="100" value="100" aria-label="Reveal paths"></label>
+</section>
+<div class="panels"><section class="panel"><h2>Original geometry</h2><canvas id="before" width="1200" height="740" aria-label="Original synthetic toolpath">Original paths are available in synthetic.gcode.</canvas></section><section class="panel"><h2 id="afterTitle">Separated halves + hardware pads</h2><canvas id="after" width="1200" height="740" aria-label="Transformed synthetic toolpath">Transformed paths are available in the G-code files.</canvas></section></div>
+<div class="legend"><span class="blue">● Left half</span><span class="gold">● Right half</span><span class="purple">● Added joiner / pad</span><span class="muted">— Dashed lines mark the cut or gap</span></div>
+<p id="layerNote"></p>
+<section class="stats" aria-label="Measured whole-job results"><div class="stat"><span class="number" id="segments"></span><span class="caption">printing segments · model layers</span></div><div class="stat"><span class="number" id="length"></span><span class="caption">XY path length · mm</span></div><div class="stat"><span class="number" id="extrusion"></span><span class="caption">commanded extrusion · mm</span></div><div class="stat"><span class="number" id="violations"></span><span class="caption">extruding segments entering the gap</span></div></section>
+<p class="explanation" id="explanation"></p>
+<footer>Computed from generated G-code, using an independent absolute-coordinate replay. No printer, slicer, network request or external asset is used by this viewer. These synthetic paths demonstrate the transformation; they are not a printer-ready job or a physical clearance simulation.<br><a href="metrics.json">Measured data</a> · <a href="synthetic.gcode">Input</a> · <a href="split.gcode">Separated output</a> · <a href="joiners.gcode">Joiners</a> · <a href="pads.gcode">Pads</a> · <a href="../README.md">Source and limitations</a></footer>
+<script>
+'use strict';
+const demo = __DEMO_DATA__;
+const controls = ['variant','layer','travel','reveal'].map(id => document.getElementById(id));
+function feature(segment){return /wire loop|outside peg|frame loop|frame peg|hardware pad/.test(segment.comment)}
+function draw(id, paths, transformed, layer, showTravel, fraction){
+  const canvas=document.getElementById(id),ctx=canvas.getContext('2d');ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,600,370);
+  const x=v=>34+(v-6)*7.6,y=v=>330-(v-6)*7.1;
+  ctx.strokeStyle='#1e2d41';ctx.lineWidth=.6;ctx.font='10px system-ui';ctx.fillStyle='#64748b';
+  for(let value=10;value<=70;value+=10){ctx.beginPath();ctx.moveTo(x(value),30);ctx.lineTo(x(value),330);ctx.stroke();ctx.fillText(value,x(value)-5,351)}
+  for(let value=10;value<=45;value+=5){ctx.beginPath();ctx.moveTo(34,y(value));ctx.lineTo(566,y(value));ctx.stroke();ctx.fillText(value,11,y(value)+3)}
+  const active=transformed&&layer>=0;
+  if(active){ctx.fillStyle='#ffffff07';ctx.fillRect(x(38),30,x(42)-x(38),300)}
+  ctx.strokeStyle='#64748b';ctx.setLineDash([4,5]);for(const value of active?[38,42]:[40]){ctx.beginPath();ctx.moveTo(x(value),30);ctx.lineTo(x(value),330);ctx.stroke()}ctx.setLineDash([]);
+  const filtered=paths.filter(segment=>segment.layer===layer);const count=Math.ceil(filtered.length*fraction);
+  filtered.slice(0,count).forEach(segment=>{
+    if(!segment.printing&&!showTravel)return;
+    ctx.strokeStyle=!segment.printing?'#70839a55':feature(segment)?'#c084fc':(segment.start[0]+segment.end[0])/2<40?'#60a5fa':'#fbbf24';
+    ctx.lineWidth=segment.printing?1.35:.75;ctx.beginPath();ctx.moveTo(x(segment.start[0]),y(segment.start[1]));ctx.lineTo(x(segment.end[0]),y(segment.end[1]));ctx.stroke();
+  });ctx.fillStyle='#94a3b8';ctx.fillText('X / mm',532,351);ctx.fillText('Y / mm',10,18);
+}
+function update(){
+  const [variantControl,layerControl,travelControl,revealControl]=controls;
+  const variant=variantControl.value,layer=Number(layerControl.value),fraction=Number(revealControl.value)/100;
+  draw('before',demo.paths.input,false,layer,travelControl.checked,fraction);draw('after',demo.paths[variant],true,layer,travelControl.checked,fraction);
+  const result=demo.variants[variant].inspection;
+  for(const [id,key] of [['segments','printing_segments'],['length','xy_length_mm'],['extrusion','extrusion_mm'],['violations','gap_violations']])document.getElementById(id).textContent=result[key].toLocaleString('en-US',{maximumFractionDigits:2});
+  document.getElementById('afterTitle').textContent={split:'Separated halves',joiners:'Separated halves + outside joiners',pads:'Separated halves + hardware pads'}[variant];
+  document.getElementById('layerNote').textContent=layer===-1?'Raft layer −1 is retained unchanged. Splitting starts at layer 0.':`Layer ${layer} of 5 · Z ${(0.4+layer*.2).toFixed(1)} mm · both panels use the same scale. Statistics below cover all six model layers.`;
+  document.getElementById('explanation').textContent=variant==='split'?'The base split preserves the original model’s total XY printing length and commanded extrusion. Gap crossings use nonextruding transfers; injected moves restore the source print feed.':variant==='joiners'?'Alternating loop and peg paths are anchored to the outside of each half. They add extrusion and path length; those additions are included in the measured totals.':'Compact pads and matching loop/peg paths follow the tapered layer bounds. Here they are added only to the bottom two and top two model layers. Their dimensions are algorithmic output, not evidence of a tested physical fit.';
+}
+controls.forEach(control=>control.addEventListener('input',update));update();
+</script>
+</html>

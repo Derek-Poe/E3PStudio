@@ -1,0 +1,197 @@
+{
+  "axis": "x",
+  "cut_mm": 40,
+  "fixture": "six tapered rectangular layers with nine raster paths per layer and one unchanged raft outline",
+  "gap_mm": 4,
+  "source": {
+    "extrusion_mm": 95.4,
+    "input_sha256": "f0eb6d3b86a8314490005f6b3599a8de02e053f7b48e45f91e77f798261d637d",
+    "printing_segments": 78,
+    "xy_length_mm": 2385.0
+  },
+  "variants": {
+    "joiners": {
+      "config": {
+        "gap_mm": 4,
+        "outside_joiner_count": 2,
+        "wire_loops": true
+      },
+      "inspection": {
+        "extrusion_mm": 125.61972,
+        "gap_violation_segments": [],
+        "gap_violations": 0,
+        "printing_segments": 444,
+        "xy_length_mm": 3140.493487
+      },
+      "output_sha256": "fff137b139e4243ec3074c9e36081450765fca03821701f93daf3f74013bc10d",
+      "raft_text_unchanged": true,
+      "transform": {
+        "analysis": {
+          "bounds": {
+            "x": {
+              "center": 40.0,
+              "max": 60.0,
+              "min": 20.0,
+              "span": 40.0
+            },
+            "y": {
+              "center": 30.0,
+              "max": 40.0,
+              "min": 20.0,
+              "span": 20.0
+            }
+          },
+          "layer_count": 6,
+          "layer_max": 5,
+          "layer_min": 0,
+          "segment_count": 78,
+          "split_start_layer": 0
+        },
+        "axis": "x",
+        "coordinate_mm": 40.0,
+        "gap_mm": 4.0,
+        "split_start_layer": 0,
+        "stats": {
+          "cross_gap_transfers": 71,
+          "extrusion_moves_shifted": 12,
+          "lines_rewritten": 138,
+          "outside_frame_layers": 0,
+          "outside_frame_loop_tabs": 0,
+          "outside_frame_paths": 0,
+          "outside_frame_peg_tabs": 0,
+          "outside_frames_added": 0,
+          "outside_pegs_added": 12,
+          "plane_moves_dropped": 0,
+          "split_moves": 66,
+          "start_alignment_transfers": 0,
+          "travel_moves_shifted": 60,
+          "wire_loop_layers": 6,
+          "wire_loop_pairs": 12,
+          "wire_loops_added": 12
+        }
+      }
+    },
+    "pads": {
+      "config": {
+        "gap_mm": 4,
+        "outside_frame": true,
+        "outside_frame_band_layers": 2,
+        "outside_joiner_count": 2
+      },
+      "inspection": {
+        "extrusion_mm": 181.08248,
+        "gap_violation_segments": [],
+        "gap_violations": 0,
+        "printing_segments": 840,
+        "xy_length_mm": 4527.062324
+      },
+      "output_sha256": "ffd8bf25dab7bdd01c30e6b474c4502c7947b0f9f5bd76a5dc387f85a358cf64",
+      "raft_text_unchanged": true,
+      "transform": {
+        "analysis": {
+          "bounds": {
+            "x": {
+              "center": 40.0,
+              "max": 60.0,
+              "min": 20.0,
+              "span": 40.0
+            },
+            "y": {
+              "center": 30.0,
+              "max": 40.0,
+              "min": 20.0,
+              "span": 20.0
+            }
+          },
+          "layer_count": 6,
+          "layer_max": 5,
+          "layer_min": 0,
+          "segment_count": 78,
+          "split_start_layer": 0
+        },
+        "axis": "x",
+        "coordinate_mm": 40.0,
+        "gap_mm": 4.0,
+        "split_start_layer": 0,
+        "stats": {
+          "cross_gap_transfers": 71,
+          "extrusion_moves_shifted": 12,
+          "lines_rewritten": 138,
+          "outside_frame_layers": 4,
+          "outside_frame_loop_tabs": 8,
+          "outside_frame_paths": 16,
+          "outside_frame_peg_tabs": 8,
+          "outside_frames_added": 16,
+          "outside_pegs_added": 0,
+          "plane_moves_dropped": 0,
+          "split_moves": 66,
+          "start_alignment_transfers": 0,
+          "travel_moves_shifted": 60,
+          "wire_loop_layers": 0,
+          "wire_loop_pairs": 0,
+          "wire_loops_added": 0
+        }
+      }
+    },
+    "split": {
+      "config": {
+        "gap_mm": 4,
+        "outside_joiner_count": 2
+      },
+      "inspection": {
+        "extrusion_mm": 95.4,
+        "gap_violation_segments": [],
+        "gap_violations": 0,
+        "printing_segments": 144,
+        "xy_length_mm": 2385.0
+      },
+      "output_sha256": "2b85247d6cbebadbb18a0e0c593a224f7414e28972580a58945eb88b045b28ce",
+      "raft_text_unchanged": true,
+      "transform": {
+        "analysis": {
+          "bounds": {
+            "x": {
+              "center": 40.0,
+              "max": 60.0,
+              "min": 20.0,
+              "span": 40.0
+            },
+            "y": {
+              "center": 30.0,
+              "max": 40.0,
+              "min": 20.0,
+              "span": 20.0
+            }
+          },
+          "layer_count": 6,
+          "layer_max": 5,
+          "layer_min": 0,
+          "segment_count": 78,
+          "split_start_layer": 0
+        },
+        "axis": "x",
+        "coordinate_mm": 40.0,
+        "gap_mm": 4.0,
+        "split_start_layer": 0,
+        "stats": {
+          "cross_gap_transfers": 71,
+          "extrusion_moves_shifted": 12,
+          "lines_rewritten": 138,
+          "outside_frame_layers": 0,
+          "outside_frame_loop_tabs": 0,
+          "outside_frame_paths": 0,
+          "outside_frame_peg_tabs": 0,
+          "outside_frames_added": 0,
+          "outside_pegs_added": 0,
+          "plane_moves_dropped": 0,
+          "split_moves": 66,
+          "start_alignment_transfers": 0,
+          "travel_moves_shifted": 60,
+          "wire_loop_layers": 0,
+          "wire_loop_pairs": 0,
+          "wire_loops_added": 0
+        }
+      }
+    }
+  }
+}
